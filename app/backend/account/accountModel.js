@@ -1,6 +1,6 @@
 import Sequelize from 'sequelize';
 
-const connectionString = process.env.DATABASE_CONNECTIONSTRING || 'postgres://localhost:5432/sf-film-map';
+const connectionString = process.env.DATABASE_URL || 'postgres://localhost:5432/sf-film-map';
 
 const options = {
   dialect: 'postgres',
