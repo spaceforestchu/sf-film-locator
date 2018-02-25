@@ -2,7 +2,8 @@ import express from 'express';
 import path from 'path';
 import logger from 'morgan';
 import bodyParser from 'body-parser';
-import index from './routes/index';
+import index from './backend/routes/index';
+import { account } from './backend/account';
 
 const app = express();
 app.disable('x-powered-by');
@@ -20,7 +21,7 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 // Routes
 app.use('/', index);
-
+app.use('/account', account);
 // Catch 404 and forward to error handler
 app.use((req, res, next) => {
   const err = new Error('Not Found');
