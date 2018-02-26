@@ -5,7 +5,18 @@
      "no-restricted-globals": ["error", "event", "fdescribe"],
      "arrow-body-style": ["error", "always"],
      "react/jsx-filename-extension": [1, { "extensions": [".js", ".jsx"] }],
-     "react/prefer-stateless-function": "off"
+     "react/prefer-stateless-function": "off",
+     "react/self-closing-comp": ["error", {
+      "component": true,
+      "html": true,
+      }],
+      "jsx-a11y/label-has-for": [ 2, {
+        "components": [ "Label" ],
+        "required": {
+          "some": [ "nesting", "id" ]
+          },
+          "allowChildren": true
+          }]
      },
      "plugins": [
         "react"
@@ -13,5 +24,5 @@
       "env": {
         "browser": true,
         "node": true
-      }
+      },
 }
