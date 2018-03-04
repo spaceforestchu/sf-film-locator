@@ -1,3 +1,8 @@
 body {
   font-family: Helvetica, Arial, sans-serif;
 }
+
+.form-control:focus {
+  border-color: #32CD32;
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.075) inset, 0px 0px 8px rgba(0, 255, 0, 0.5);
+}

@@ -12,8 +12,7 @@
 //Block Element modifier
 
 .nav__input {
-  height: $font-size;
-  margin-top: 0.3rem;
+  width: $input-width;
 }
 
 @media only screen and (max-width: 568px) {

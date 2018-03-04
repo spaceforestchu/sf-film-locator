@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
-import Modal from 'react-modal';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import Modal from 'react-modal';
+import SignupForm from './SignupForm';
 
 Modal.setAppElement('#app');
 
@@ -25,35 +27,7 @@ class SignUp extends Component {
         shouldCloseOnOverlayClick={this.props.shouldCloseOnOverlayClick}
         onRequestClose={this.props.closeModal}
       >
-        <form>
-          <div className="form-group">
-            <label>Example label</label>
-            <input
-              type="text"
-              className="form-control"
-              id="formGroupExampleInput"
-              placeholder="Example input"
-            />
-          </div>
-          <div className="form-group">
-            <label>Email</label>
-            <input
-              className="form-control"
-              placeholder="Example input"
-              id="email"
-              name="email"
-              type="email"
-            />
-          </div>
-          <div className="form-group">
-            <label>Example label</label>
-            <input
-              className="form-control"
-              type="date"
-              id="example-date-input"
-            />
-          </div>
-        </form>
+        <SignupForm closeModal={this.props.closeModal} />
       </Modal>
     );
   }
@@ -64,5 +38,7 @@ SignUp.propTypes = {
   shouldCloseOnOverlayClick: PropTypes.bool.isRequired,
   closeModal: PropTypes.func.isRequired,
 };
+
+connect(null, null)(SignUp);
 
 export default SignUp;
