@@ -2,7 +2,7 @@ const path = require('path');
 
 module.exports = {
   entry: {
-    app: ['./app/frontend/src/app.js'],
+    app: ['babel-polyfill', 'whatwg-fetch', './app/frontend/src/app.js'],
   },
   output: {
     path: path.join(__dirname, './public/build'),

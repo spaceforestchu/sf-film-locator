@@ -14,7 +14,7 @@ class NavigationBarView extends Component {
   }
 
   openModal = (event) => {
-    if(event === 'signUpModalOpen') {
+    if (event === 'signUpModalOpen') {
       this.setState({
         signUpModalOpen: true,
       });
@@ -79,7 +79,6 @@ handleClick = (event) => {
         shouldCloseOnOverlayClick={true}
         />
     }
-
 
     return (
       <nav className="navbar navbar-toggleable-md navbar-light bg-faded">

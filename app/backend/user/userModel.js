@@ -6,15 +6,35 @@ const options = {
   dialect: 'postgres',
 };
 
-const accountDatabase = new Sequelize(connectionString, options);
+const userDatabase = new Sequelize(connectionString, options);
 
-const account = accountDatabase.define('account', {
+const users = userDatabase.define('users', {
   full_name: {
     type: Sequelize.STRING(30),
     allowNull: false,
     validate: {
       notEmpty: {
         msg: 'Full name cannot be empty',
+      },
+    },
+  },
+  email: {
+    type: Sequelize.STRING(30),
+    unique: true,
+    allowNull: false,
+    validate: {
+      isEmail: {
+        msg: 'Email is not valid',
+      },
+      notEmpty: true,
+    },
+  },
+  password: {
+    type: Sequelize.STRING,
+    allowNull: false,
+    validate: {
+      notEmpty: {
+        msg: 'password cannot be empty',
       },
     },
   },
@@ -37,17 +57,6 @@ const account = accountDatabase.define('account', {
       isAlpha: true,
     },
   },
-  email: {
-    type: Sequelize.STRING(30),
-    unique: true,
-    allowNull: false,
-    validate: {
-      isEmail: {
-        msg: 'Email is not valid',
-      },
-      notEmpty: true,
-    },
-  },
   username: {
     type: Sequelize.STRING(30),
     allowNull: false,
@@ -58,18 +67,9 @@ const account = accountDatabase.define('account', {
       },
     },
   },
-  password: {
-    type: Sequelize.STRING,
-    allowNull: false,
-    validate: {
-      notEmpty: {
-        msg: 'password cannot be empty',
-      },
-    },
-  },
 });
 
 export {
-  accountDatabase,
-  account,
+  userDatabase,
+  users,
 };

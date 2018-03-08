@@ -1,9 +1,9 @@
 import app from './app';
-import { accountDatabase } from './backend/account/accountModel';
+import { userDatabase } from './backend/user/userModel';
 
 const { PORT = 3000 } = process.env;
 
-accountDatabase.sync({ loggin: false, force: false })
+userDatabase.sync({ loggin: false, force: false })
 .then(function() {
   app.listen(PORT, () => {
     console.log('Postgres data base connected');

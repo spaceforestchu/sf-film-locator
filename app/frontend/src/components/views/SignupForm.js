@@ -1,9 +1,10 @@
 import React from 'react';
 import { Field, reduxForm } from 'redux-form';
 import PropTypes from 'prop-types';
+import validator from 'validator';
 
 const onSubmit = (values) => {
-  console.log(values);
+  this.props.onSubmit(values);
 };
 
 const CreateRenderer = render => (field) => {
@@ -80,11 +81,11 @@ const Radio = props => {
   return <div></div>
 }
 
-let SignupForm = ({ handleSubmit, submitting, closeModal }) =>
+let SignupForm = ({ handleSubmit, submitting, closeModal, onSubmit }) =>
   <form onSubmit={handleSubmit(onSubmit.bind(this))}>
     <Field
-      label="Fullname"
-      name="fullname"
+      label="Full name"
+      name="fullName"
       type="text"
       component={renderInput}
     />
@@ -97,16 +98,16 @@ let SignupForm = ({ handleSubmit, submitting, closeModal }) =>
     />
 
     <Field
-      label="Birthday"
-      name="birthday"
-      type="date"
+      label="Password"
+      name="password"
+      type="password"
       component={renderInput}
     />
 
     <Field
-      label="Password"
-      name="password"
-      type="password"
+      label="Birthday"
+      name="birthday"
+      type="date"
       component={renderInput}
     />
 
@@ -117,7 +118,7 @@ let SignupForm = ({ handleSubmit, submitting, closeModal }) =>
       options={{
        male: 'male',
        female: 'female',
-       trans: 'trans'
+       trans: 'trans',
       }}
     />
 
@@ -147,6 +148,8 @@ let SignupForm = ({ handleSubmit, submitting, closeModal }) =>
 
 const validate = (values) => {
   const errors = {};
+  const email = values.email;
+  const password = values.password;
   if (!values.fullname) {
     errors.fullname = 'Enter a fullname!';
   }
@@ -159,12 +162,31 @@ const validate = (values) => {
     errors.email = 'Enter an email!';
   }
 
+  if (email) {
+    if (!validator.isEmail(email)) {
+      errors.email = 'Enter an real email address please';
+    }
+  }
+
   if (!values.gender) {
     errors.gender = 'Select a gender!';
   }
 
-  if (!values.password) {
+  if (!password) {
     errors.password = 'Enter a password!';
+  }
+
+  if (password) {
+    if (password.length < 8) {
+      errors.password = 'Password must be 8 characters long';
+    }
+    if (password.length >= 8) {
+      const strongRegex = new RegExp('^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$');
+      const passwordValidator = password.match(strongRegex);
+      if (passwordValidator === null) {
+        errors.password = 'You must have one uppercase, one lowercase, a digit, and a symbol';
+      }
+    }
   }
 
   if (!values.username) {

@@ -7,7 +7,6 @@ import Main from './components/layout';
 import './styles/styles.scss';
 import store from './stores';
 
-
 class App extends Component {
   render() {
     return (
