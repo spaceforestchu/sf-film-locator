@@ -44,7 +44,7 @@ routes.post('/signup', async (req, res) => {
     });
   } catch (error) {
     res.statusMessage = error.toString();
-    res.status(400).json({
+    res.status(409).json({
       confirmation: 'failure',
       error: error.toString(),
     });

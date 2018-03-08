@@ -1,157 +1,177 @@
-import React from 'react';
-import { Field, reduxForm } from 'redux-form';
+import React, { Component } from 'react';
+import { Field, reduxForm, SubmissionError } from 'redux-form';
 import PropTypes from 'prop-types';
 import validator from 'validator';
+import { connect } from 'react-redux';
+import { signUserUp } from '../../actions';
 
-const onSubmit = (values) => {
-  this.props.onSubmit(values);
-};
-
-const CreateRenderer = render => (field) => {
-  const {
-    meta: {
-      touched,
-      error,
-      input,
-      label,
-    },
-  } = field;
-
-  const fieldInput = field.input;
-  const fieldLabel = field.label;
-  const fieldType = field.type;
-  const fieldChildren = field.children;
-
-  const className = `form-group ${touched && error ? 'has-danger' : ''}`;
-  return (
-    <div className={className}>
-      <label>{field.label}</label>
-      {render(fieldInput, fieldLabel, fieldType, fieldChildren)}
-      <label className="form-control-label" >
-        {touched ? error : ''}
-      </label>
-    </div>
-  );
-};
-
-const renderInput = CreateRenderer((input, label, type) => {
-
-  return (
-    <input
-      className="form-control"
-      placeholder={label}
-      type={type}
-      {...input}
-    />
-  );
-});
-
-const Radio = props => {
-  if (props && props.input && props.options) {
-    const renderRadioButtons = (key, index) => {
+class SignupForm extends Component {
+  Radio = props => {
+    if (props && props.input && props.options) {
+      const renderRadioButtons = (key, index) => {
+        return (
+          <label className="labelSpace" key={`${index}`} htmlFor={`${props.input.name}-${index}`}>
+            <Field
+              id={index}
+              component="input"
+              name={props.input.name}
+              type="radio"
+              value={key}
+              className="labelSpace"
+            />
+            {props.options[key]}
+          </label>
+        )
+      };
       return (
-        <label className="labelSpace" key={`${index}`} htmlFor={`${props.input.name}-${index}`}>
-          <Field
-            id={index}
-            component="input"
-            name={props.input.name}
-            type="radio"
-            value={key}
-            className="labelSpace"
-          />
-          {props.options[key]}
-        </label>
-      )
-    };
-    return (
-      <div>
         <div>
-          {props.label}
+          <div>
+            {props.label}
+          </div>
+          <div className='radioHeight'>
+            {props.options &&
+              Object.keys(props.options).map(renderRadioButtons)}
+          </div>
+          <label className="labelColor" htmlFor="inputDanger1">
+            {props.meta.submitFailed === false ?  '' : props.meta.error}
+          </label>
         </div>
-        <div className='radioHeight'>
-          {props.options &&
-            Object.keys(props.options).map(renderRadioButtons)}
-        </div>
-        <label className="labelColor" htmlFor="inputDanger1">
-          {props.meta.submitFailed === false ?  '' : props.meta.error}
+      );
+    }
+    return <div></div>
+  }
+
+  onSubmit = async (values) => {
+    try {
+      const result = await this.props.signUserUp(values);
+      return result;
+    } catch (error) {
+      const errorMessage = error.toString();
+      if (errorMessage.match(/Email/gi)) {
+        const errorEmailIndex = errorMessage.indexOf('Email');
+        const errorEmail = errorMessage.slice(errorEmailIndex, errorMessage.length - 1);
+        throw new SubmissionError({ email: errorEmail });
+      } else if (errorMessage.match(/Username/gi)) {
+        const errorUserIndex = errorMessage.indexOf('Username');
+        const errorUser = errorMessage.slice(errorUserIndex, errorMessage.length - 1);
+        throw new SubmissionError({ username: errorUser });
+      }
+    }
+  };
+
+  CreateRenderer = render => (field) => {
+    const {
+      meta: {
+        touched,
+        error,
+        input,
+        label,
+      },
+    } = field;
+
+    const fieldInput = field.input;
+    const fieldLabel = field.label;
+    const fieldType = field.type;
+    const fieldChildren = field.children;
+
+    const className = `form-group ${touched && error ? 'has-danger' : ''}`;
+    return (
+      <div className={className}>
+        <label>{field.label}</label>
+        {render(fieldInput, fieldLabel, fieldType, fieldChildren)}
+        <label className="form-control-label" >
+          {touched ? error : ''}
         </label>
       </div>
     );
+  };
+
+  renderInput = this.CreateRenderer((input, label, type) => {
+
+    return (
+      <input
+        className="form-control"
+        placeholder={label}
+        type={type}
+        {...input}
+      />
+    );
+  });
+
+  render() {
+    return (
+      <form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
+        <Field
+          label="Full name"
+          name="fullName"
+          type="text"
+          component={this.renderInput}
+        />
+
+        <Field
+          label="Email"
+          name="email"
+          type="text"
+          component={this.renderInput}
+        />
+
+        <Field
+          label="Password"
+          name="password"
+          type="password"
+          component={this.renderInput}
+        />
+
+        <Field
+          label="Birthday"
+          name="birthday"
+          type="date"
+          component={this.renderInput}
+        />
+
+        <Field
+          label="Gender"
+          name="gender"
+          component={this.Radio}
+          options={{
+           male: 'male',
+           female: 'female',
+           trans: 'trans',
+          }}
+        />
+
+        <Field
+          label="Username"
+          name="username"
+          type="text"
+          component={this.renderInput}
+        />
+
+        <button
+          className="btn btn-outline-success my-2 my-sm-0"
+          type="submit"
+          disabled={this.props.submitting}
+        >
+          Submit
+        </button>
+        <button
+          className="buttonSpace btn btn-outline-danger my-2 my-sm-0"
+          type="submit"
+          onClick={this.props.closeModal}
+        >
+          Cancel
+        </button>
+      </form>
+    );
   }
-  return <div></div>
 }
-
-let SignupForm = ({ handleSubmit, submitting, closeModal, onSubmit }) =>
-  <form onSubmit={handleSubmit(onSubmit.bind(this))}>
-    <Field
-      label="Full name"
-      name="fullName"
-      type="text"
-      component={renderInput}
-    />
-
-    <Field
-      label="Email"
-      name="email"
-      type="text"
-      component={renderInput}
-    />
-
-    <Field
-      label="Password"
-      name="password"
-      type="password"
-      component={renderInput}
-    />
-
-    <Field
-      label="Birthday"
-      name="birthday"
-      type="date"
-      component={renderInput}
-    />
-
-    <Field
-      label="Gender"
-      name="gender"
-      component={Radio}
-      options={{
-       male: 'male',
-       female: 'female',
-       trans: 'trans',
-      }}
-    />
-
-    <Field
-      label="Username"
-      name="username"
-      type="text"
-      component={renderInput}
-    />
-
-    <button
-      className="btn btn-outline-success my-2 my-sm-0"
-      type="submit"
-      disabled={submitting}
-    >
-      Submit
-    </button>
-    <button
-      className="buttonSpace btn btn-outline-danger my-2 my-sm-0"
-      type="submit"
-      onClick={closeModal}
-    >
-      Cancel
-    </button>
-  </form>;
-
 
 const validate = (values) => {
   const errors = {};
-  const email = values.email;
-  const password = values.password;
-  if (!values.fullname) {
-    errors.fullname = 'Enter a fullname!';
+  const { email } = values;
+  const { password } = values;
+  if (!values.fullName) {
+    errors.fullName = 'Enter a fullname!';
   }
 
   if (!values.birthday) {
@@ -199,12 +219,85 @@ const validate = (values) => {
 SignupForm.propTypes = {
   handleSubmit: PropTypes.func.isRequired,
   submitting: PropTypes.bool.isRequired,
+  closeModal: PropTypes.func.isRequired,
+  signUserUp: PropTypes.func.isRequired,
 };
 
-SignupForm = reduxForm({
+const dispatchToProps = (dispatch) => {
+  return {
+    signUserUp: (user) => dispatch(signUserUp(user)),
+  };
+};
+
+export default SignupForm = reduxForm({
   validate,
   destroyOnUnmount: false,
   form: 'SignupForm',
-})(SignupForm);
+})(connect(null, dispatchToProps)(SignupForm));
 
-export default SignupForm;
+/*
+
+<form onSubmit={this.props.handleSubmit(this.onSubmit.bind(this))}>
+  <Field
+    label="Full name"
+    name="fullName"
+    type="text"
+    component={this.renderInput}
+  />
+
+  <Field
+    label="Email"
+    name="email"
+    type="text"
+    component={this.renderInput}
+  />
+
+  <Field
+    label="Password"
+    name="password"
+    type="password"
+    component={this.renderInput}
+  />
+
+  <Field
+    label="Birthday"
+    name="birthday"
+    type="date"
+    component={this.renderInput}
+  />
+
+  <Field
+    label="Gender"
+    name="gender"
+    component={this.Radio}
+    options={{
+     male: 'male',
+     female: 'female',
+     trans: 'trans',
+    }}
+  />
+
+  <Field
+    label="Username"
+    name="username"
+    type="text"
+    component={this.renderInput}
+  />
+
+  <button
+    className="btn btn-outline-success my-2 my-sm-0"
+    type="submit"
+    disabled={this.props.submitting}
+  >
+    Submit
+  </button>
+  <button
+    className="buttonSpace btn btn-outline-danger my-2 my-sm-0"
+    type="submit"
+    onClick={this.props.closeModal}
+  >
+    Cancel
+  </button>
+</form>
+
+*/

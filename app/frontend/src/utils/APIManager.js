@@ -7,9 +7,14 @@ export const signUserUpApi = async (url, params) => {
       },
       body: JSON.stringify(params),
     });
+
+    const { status, statusText } = response;
+    if (status === 409) {
+      throw new Error(statusText);
+    }
     return response;
   } catch (error) {
-    return error;
+    throw new Error(error.toString());
   }
 };
 
